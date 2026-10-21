@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
+    "test:db": "supabase test db",
     "db:status": "supabase migration list",
     "db:push:dry-run": "supabase db push --dry-run",
     "db:push": "supabase db push"

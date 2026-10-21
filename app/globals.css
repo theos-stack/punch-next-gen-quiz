@@ -110,6 +110,20 @@ button, a, input { outline-offset: 3px; }
 .empty-tile span { color: #78828a; font-size: 12px; }
 .empty-tile strong { display: block; margin-top: 12px; font-size: 16px; }
 .empty-tile strong a:hover, .inline-link { color: var(--green); }
+.dashboard-columns { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; margin-top: 24px; }
+.dashboard-section { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: 15px; background: #fff; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.section-heading h2 { margin: 0; font-size: 18px; letter-spacing: -.03em; }
+.section-heading a { color: var(--green); font-size: 13px; font-weight: 750; }
+.dashboard-list { display: grid; }
+.dashboard-list-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; border-top: 1px solid #edf0eb; }
+.dashboard-list-row strong, .dashboard-list-row small, .badge-item strong, .badge-item small { display: block; }
+.dashboard-list-row strong, .badge-item strong { font-size: 13px; }
+.dashboard-list-row small, .badge-item small, .muted-copy { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.dashboard-list-row b { color: var(--green); white-space: nowrap; }
+.badge-list { display: grid; gap: 13px; }
+.badge-item { display: flex; align-items: center; gap: 12px; }
+.badge-medal { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border-radius: 12px; background: #f7f0d8; color: #b17a12; font-size: 18px; }
 .dashboard-actions, .result-actions { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
 .button-quiet { min-height: 46px; padding: 0 16px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font-weight: 700; cursor: pointer; }
 .button-quiet:disabled { opacity: .45; cursor: default; }
@@ -154,6 +168,15 @@ button, a, input { outline-offset: 3px; }
 .review-status { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
 .review-status.correct { color: var(--green); }
 .review-status.incorrect { color: #a44b37; }
+.leaderboard-table-wrap { margin-top: 28px; overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.leaderboard-table { width: 100%; border-collapse: collapse; text-align: left; }
+.leaderboard-table th, .leaderboard-table td { padding: 16px 18px; border-bottom: 1px solid #edf0eb; }
+.leaderboard-table thead th { background: #f8faf6; color: #6b7780; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
+.leaderboard-table tbody th { font-size: 14px; font-weight: 750; }
+.leaderboard-table tbody td { color: #526068; font-size: 14px; }
+.leaderboard-table tbody tr:last-child th, .leaderboard-table tbody tr:last-child td { border-bottom: 0; }
+.rank-mark { display: inline-grid; min-width: 31px; height: 31px; padding: 0 7px; place-items: center; border-radius: 10px; background: #f0f3ef; color: #526068; font-size: 12px; font-weight: 800; }
+.rank-mark.top-rank { background: #f8f0d9; color: #956515; }
 .status-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
 .status-card { max-width: 490px; padding: 38px; border: 1px solid var(--line); border-radius: 18px; background: white; text-align: center; }
 .status-card h1 { margin-top: 0; letter-spacing: -.04em; }
@@ -190,9 +213,11 @@ button, a, input { outline-offset: 3px; }
   .empty-tiles { grid-template-columns: 1fr; }
   .profile-card { margin-top: 28px; }
   .quiz-grid { grid-template-columns: 1fr; }
+  .dashboard-columns { grid-template-columns: 1fr; }
   .quiz-meta, .quiz-runner-top { flex-direction: column; gap: 5px; }
   .history-card { align-items: flex-start; flex-direction: column; }
   .dashboard-actions, .result-actions { align-items: stretch; flex-direction: column; }
+  .leaderboard-table th, .leaderboard-table td { padding: 13px 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
