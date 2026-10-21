@@ -1,0 +1,48 @@
+{
+  "name": "punch-next-gen-quiz",
+  "version": "1.0.0",
+  "description": "A student quiz and rewards platform built for PUNCH NextGen.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "db:status": "supabase migration list",
+    "db:push:dry-run": "supabase db push --dry-run",
+    "db:push": "supabase db push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theos-stack/punch-next-gen-quiz.git"
+  },
+  "keywords": [],
+  "author": "Samuel Ojo",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/theos-stack/punch-next-gen-quiz/issues"
+  },
+  "homepage": "https://github.com/theos-stack/punch-next-gen-quiz#readme",
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "next": "^16.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "postcss": "^8.5.31",
+    "supabase": "^2.121.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0"
+  }
+}
