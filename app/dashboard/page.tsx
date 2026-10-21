@@ -36,11 +36,12 @@ export default async function DashboardPage() {
           <div className="avatar" aria-hidden="true">{displayName.trim().charAt(0).toUpperCase()}</div>
           <div><strong>{displayName}</strong><span>{email}</span></div>
         </div>
-        <div className="setup-note"><strong>You&apos;re signed in.</strong> Your dashboard is ready. Quizzes, XP, badges, and leaderboard features will arrive in the next implementation phases.</div>
+        <div className="setup-note"><strong>Your quiz space is ready.</strong> Choose a quiz, check your score, and keep track of your learning history.</div>
+        <div className="dashboard-actions"><Link className="button-primary" href="/quizzes">Browse quizzes</Link><Link className="button-secondary" href="/history">View quiz history</Link></div>
         <div className="empty-tiles" aria-label="Your learning overview">
-          <div className="empty-tile"><span>QUIZ ATTEMPTS</span><strong>Coming soon</strong></div>
-          <div className="empty-tile"><span>TOTAL XP</span><strong>Coming soon</strong></div>
-          <div className="empty-tile"><span>ACHIEVEMENTS</span><strong>Coming soon</strong></div>
+          <div className="empty-tile"><span>QUIZZES</span><strong><Link href="/quizzes">Explore available quizzes →</Link></strong></div>
+          <div className="empty-tile"><span>QUIZ HISTORY</span><strong><Link href="/history">Review your attempts →</Link></strong></div>
+          <div className="empty-tile"><span>XP &amp; ACHIEVEMENTS</span><strong>Coming in Phase 3</strong></div>
         </div>
       </section>
     </main>
