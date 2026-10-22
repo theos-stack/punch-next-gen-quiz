@@ -32,6 +32,8 @@ A student learning platform where students can take short quizzes, track progres
 - Quiz Starter and High Scorer badges are awarded by the database with per-student uniqueness
 - Authenticated leaderboard ranks students by XP without returning email addresses
 - Dashboard totals, badges, recent attempts, and leaderboard use database results
+- Authenticated student pages include compact mobile navigation and a dashboard XP summary
+- Quiz takers can review their answers and unanswered questions before the final submission
 
 ## Architecture
 
@@ -84,7 +86,7 @@ npm run test:db
 npm run build
 ```
 
-`npm run test` covers request validation. `npm run test:db` runs the pgTAP reward, badge, ownership, and leaderboard checks against the local Supabase database. It does not prove the remote project is migrated or live account email flows work.
+`npm run test` covers request validation. `npm run test:db` runs the pgTAP reward, badge, ownership, and leaderboard checks against the local Supabase database; Docker and a running local Supabase database are required. It does not prove the remote project is migrated or live account email flows work.
 
 To manually verify authentication, try registration, email confirmation, login, dashboard access, logout, and opening `/dashboard` in a signed-out browser. A real Supabase project and applied migration are required for end-to-end auth and RLS verification.
 
@@ -96,14 +98,16 @@ To manually verify authentication, try registration, email confirmation, login, 
 - Student profile access is limited by PostgreSQL RLS and column-level update grants.
 - Only a Supabase publishable key is used. No service-role secret is included.
 
-## Current limitations
+## Current verification status
 
-- The Phase 2 and Phase 3 migrations and live Supabase RLS/transaction behavior must be verified against the target project before release.
-- Email delivery and authentication behavior depend on Supabase project settings.
+- The repair migration, server-side quiz scoring, XP/badge allocation, duplicate rejection, and a simultaneous duplicate-submission test were verified against the assessment Supabase project. See [`PUNCH_FINAL_INTEGRATION_REPORT.md`](./PUNCH_FINAL_INTEGRATION_REPORT.md).
+- The mobile app navigation, dashboard summary, and pre-submit answer review have been implemented. They still require visual browser QA at the documented viewport widths.
+- The authenticated end-to-end browser journey, reciprocal student RLS check, exact callback redirect allowlist, local pgTAP suite, and Vercel preview remain unverified. See [`PUNCH_RELEASE_CANDIDATE_REPORT.md`](./PUNCH_RELEASE_CANDIDATE_REPORT.md) for current blockers.
+- Email delivery and callback behavior depend on the Supabase project settings.
 
 ## Deployment
 
-Not deployed yet. Add the two environment variables above to the Vercel project, configure the production Supabase Site URL and `/auth/callback` redirect URL, apply the migration, then deploy.
+No Vercel preview is currently linked to this checkout. Before creating a preview, link the authorized Vercel project, configure the two publishable Supabase environment variables above, and add the preview callback URL to Supabase Auth. Production deployment requires a separate review.
 
 ## AI assistance disclosure
 

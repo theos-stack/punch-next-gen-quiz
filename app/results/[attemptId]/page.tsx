@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseEnvironment } from "@/lib/supabase/env";
+import { StudentMobileNav } from "@/components/student-mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -27,5 +28,5 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
     <span className="eyebrow"><span className="eyebrow-dot" />Quiz complete</span><div className="result-score"><strong>{attempt.score}<span>/{attempt.total_questions}</span></strong><span>{attempt.percentage}%</span></div><h1 className="page-title">{quiz?.title ?? "Your result"}</h1><p className="page-lede">Your score has been saved to your account.</p>
     <div className="answer-review">{(answers ?? []).map((answer, index) => { const question = questionById.get(answer.question_id); const options = Array.isArray(question?.options) ? question.options as { id: string; text: string }[] : []; const selected = options.find((option) => option.id === answer.selected_option); return <article className="review-card" key={answer.question_id}><span className={`review-status ${answer.is_correct ? "correct" : "incorrect"}`}>{answer.is_correct ? "Correct" : "Review"} · {index + 1}</span><h2>{question?.prompt ?? "Question"}</h2><p>Your answer: <strong>{selected?.text ?? answer.selected_option}</strong></p></article>; })}</div>
     <div className="result-actions"><Link className="button-primary" href="/quizzes">Try another quiz</Link><Link className="button-secondary" href="/history">View all attempts</Link></div>
-  </section></main>;
+  </section><StudentMobileNav /></main>;
 }

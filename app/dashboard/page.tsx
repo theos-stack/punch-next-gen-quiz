@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseEnvironment } from "@/lib/supabase/env";
+import { StudentMobileNav } from "@/components/student-mobile-nav";
 
 export const dynamic = "force-dynamic";
 
@@ -58,11 +59,12 @@ export default async function DashboardPage() {
           <div className="avatar" aria-hidden="true">{displayName.trim().charAt(0).toUpperCase()}</div>
           <div><strong>{displayName}</strong><span>{email}</span></div>
         </div>
-        <div className="dashboard-actions"><Link className="button-primary" href="/quizzes">Browse quizzes</Link><Link className="button-secondary" href="/history">All quiz attempts</Link><Link className="button-secondary" href="/leaderboard">Leaderboard →</Link></div>
-        <div className="empty-tiles" aria-label="Your learning overview">
-          <div className="empty-tile"><span>TOTAL XP</span><strong>{xpTotal.toLocaleString()}</strong></div>
-          <div className="empty-tile"><span>COMPLETED QUIZZES</span><strong>{completedCountResult.count ?? 0}</strong></div>
-          <div className="empty-tile"><span>BADGES</span><strong>{badgeRows.length}</strong></div>
+        <div className="dashboard-overview" aria-label="Your learning overview">
+          <div className="xp-summary"><span className="xp-summary-icon" aria-hidden="true">✦</span><div><span className="summary-label">YOUR TOTAL XP</span><strong>{xpTotal.toLocaleString()}</strong><small>Keep learning to grow your score</small></div><Link className="button-primary" href="/quizzes">Start a quiz <span aria-hidden="true">→</span></Link></div>
+          <div className="stat-tiles">
+            <div className="empty-tile"><span>COMPLETED QUIZZES</span><strong>{completedCountResult.count ?? 0}</strong></div>
+            <div className="empty-tile"><span>BADGES EARNED</span><strong>{badgeRows.length}</strong></div>
+          </div>
         </div>
         <div className="dashboard-columns">
           <section className="dashboard-section" aria-labelledby="recent-title"><div className="section-heading"><h2 id="recent-title">Recent attempts</h2><Link href="/history">See all</Link></div>
@@ -73,6 +75,7 @@ export default async function DashboardPage() {
           </section>
         </div>
       </section>
+      <StudentMobileNav />
     </main>
   );
 }
