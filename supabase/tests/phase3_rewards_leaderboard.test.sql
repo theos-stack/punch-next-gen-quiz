@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(25);
+select plan(26);
 
 select has_table('public', 'xp_awards', 'XP ledger is installed');
 select col_is_unique('public', 'xp_awards', 'attempt_id', 'each attempt can award XP at most once');
@@ -43,6 +43,14 @@ select throws_ok(
   )$$,
   '22023', 'Question or selected option is not part of this quiz',
   'submission rejects a question ID from outside the quiz'
+);
+select throws_ok(
+  $$select public.submit_quiz_attempt(
+    current_setting('punch.test.attempt_a')::uuid,
+    jsonb_set(current_setting('punch.test.answers')::jsonb, '{0,extra}', '"unexpected"'::jsonb)
+  )$$,
+  '22023', 'Each answer must contain a valid question_id and selected_option',
+  'submission rejects extra answer fields'
 );
 select is((select status from public.quiz_attempts where id = current_setting('punch.test.attempt_a')::uuid), 'in_progress', 'invalid submission leaves attempt uncompleted');
 select set_config('punch.test.result', public.submit_quiz_attempt(current_setting('punch.test.attempt_a')::uuid, current_setting('punch.test.answers')::jsonb)::text, true);

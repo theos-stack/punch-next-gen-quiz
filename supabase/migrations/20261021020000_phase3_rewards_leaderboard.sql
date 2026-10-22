@@ -103,7 +103,7 @@ begin
     from jsonb_array_elements(p_answers) as submitted(value)
     where case
       when jsonb_typeof(submitted.value) <> 'object' then true
-      else jsonb_object_length(submitted.value) <> 2
+      else (select count(*) from jsonb_object_keys(submitted.value)) <> 2
         or not (submitted.value ? 'question_id')
         or not (submitted.value ? 'selected_option')
         or jsonb_typeof(submitted.value -> 'question_id') <> 'string'
