@@ -68,7 +68,7 @@ The detailed previous live database submission evidence remains in [`PUNCH_FINAL
 
 No application source changes were required in this Vercel setup attempt. The README now points to this report, and the previous UI report is marked superseded. The existing AI-assistance disclosure in README remains intact. Vercel's generated `.gitignore` and dependency-lock changes were reverted; only the intended documentation updates will be committed.
 
-The verified Git author is Samuel Ojo (`ojoadeoluwasam@gmail.com`). The report commit link will be recorded after push.
+The verified Git author is Samuel Ojo (`ojoadeoluwasam@gmail.com`). This report and the related README update were pushed to `main` as [`77f1b31`](https://github.com/theos-stack/punch-next-gen-quiz/commit/77f1b3175ef2486a474ba2a4ebaba592407f5b73).
 
 ## Readiness recommendation
 
