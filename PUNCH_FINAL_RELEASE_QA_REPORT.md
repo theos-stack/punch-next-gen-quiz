@@ -1,7 +1,7 @@
 # PUNCH NextGen — Final Release QA Report
 
 **Date:** 22 October 2026 (WAT)  
-**Starting commit:** `95dec30e4b41befe2cf40fede68921d1ccb90e4e`  
+**Starting commit:** `a364a2ee1b86b178462829bfd9b5a0bdc4ae0443`
 **Repository:** `theos-stack/punch-next-gen-quiz`  
 **Supabase project:** `syoyadobmvrckqkmbnmq`  
 **Status:** **No valid Preview deployment exists. Do not submit or deploy to Production.**
@@ -10,7 +10,9 @@
 
 - `npx vercel@latest whoami` succeeded in the authorized Windows environment. CLI version used: `65.1.0`; no global CLI was needed.
 - No Vercel project was linked initially. I created and linked the dedicated project `theos-stacks-projects/punch-next-gen-quiz`.
-- At project setup, I declined the option to connect Git for automatic deployments. No automatic deployment from `main` is enabled.
+- At project setup, I declined the option to connect Git for automatic deployments. The GitHub repository remains unconnected to this Vercel project.
+- Added and pushed [`vercel.json`](https://github.com/theos-stack/punch-next-gen-quiz/blob/main/vercel.json) with `git.deploymentEnabled` set to disable `main` and all other branches, while allowing only `qa-preview`. The exact branch rule is `"*": false`, `"main": false`, and `"qa-preview": true`. Vercel's Git configuration documentation states unspecified branches default to enabled, so the wildcard is required to keep unrelated branches disabled. The JSON parsed successfully and the rules were inspected locally.
+- The safeguard commit is [`bf47128`](https://github.com/theos-stack/punch-next-gen-quiz/commit/bf4712801186381606d9a08d520b23939f7f518d). After confirming the safeguard was on remote `main`, created and pushed `qa-preview` from that exact commit. Remote `main` and `qa-preview` both point to `bf4712801186381606d9a08d520b23939f7f518d`; GitHub's default branch was not changed and history was not rewritten.
 - The local `.env.local` Supabase URL was checked against `syoyadobmvrckqkmbnmq`; it matched. The exact application variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are now configured for the Vercel Preview environment. Their values were not included in this report or committed.
 - The local `.env.local` and `.vercel/` remain ignored. No environment file or credential was staged.
 
@@ -32,9 +34,9 @@ The CLI account is authenticated and the Preview variables are present. The bloc
 
 ## One required interactive action
 
-To obtain a Preview without allowing automatic Production deploys from `main`, connect this Vercel project to `theos-stack/punch-next-gen-quiz` in Vercel **Project Settings → Git** and authorize the repository integration. Before saving, set the Production Branch to a deliberate protected release branch other than `main` (and keep `main` excluded from Production builds). Then tell me when Vercel shows the repository as connected. I can create and push a temporary `codex/` preview branch from commit `95dec30`, then verify that Vercel classifies its deployment as `preview` before opening it. Do not promote that preview.
+The Vercel CLI session remains available, but it cannot connect GitHub to the project from this session. In Vercel, open **theos-stacks-projects → punch-next-gen-quiz → Project Settings → Git**, choose **Connect Git Repository**, select **GitHub → theos-stack/punch-next-gen-quiz**, and authorize that repository for the Vercel app if prompted. The safe `vercel.json` is already on remote `main` and `qa-preview` before this connection. Keep the Production Branch set to `main`; its deployment is explicitly disabled by the committed rule. After connecting, inspect **Settings → Environments → Production → Branch Tracking** and confirm the branch is `main`. `qa-preview` should then be treated as a Preview branch. Stop if the dashboard reports a Production deployment for either push or changes the configured production branch unexpectedly.
 
-This is the specific Vercel GitHub authorization/configuration still needed; CLI login itself already works.
+Once Vercel displays the repository as connected and the Production Branch as `main`, tell me “connected”. I can then verify the first Git-triggered `qa-preview` deployment's target metadata and build before proceeding with callback configuration and browser QA. Do not promote the Preview.
 
 ## Authentication callback and Supabase redirects
 
@@ -66,10 +68,10 @@ The detailed previous live database submission evidence remains in [`PUNCH_FINAL
 
 ## Repository and AI-use disclosure
 
-No application source changes were required in this Vercel setup attempt. The README now points to this report, and the previous UI report is marked superseded. The existing AI-assistance disclosure in README remains intact. Vercel's generated `.gitignore` and dependency-lock changes were reverted; only the intended documentation updates will be committed.
+No application source changes were required in this Vercel setup attempt. The README points to this report, and the previous UI report is marked superseded. The existing AI-assistance disclosure in README remains intact. Vercel's generated `.gitignore` and dependency-lock changes were reverted. The deployment safeguard is committed separately from this QA report.
 
-The verified Git author is Samuel Ojo (`ojoadeoluwasam@gmail.com`). This report and the related README update were pushed to `main` as [`77f1b31`](https://github.com/theos-stack/punch-next-gen-quiz/commit/77f1b3175ef2486a474ba2a4ebaba592407f5b73).
+The verified Git author is Samuel Ojo (`ojoadeoluwasam@gmail.com`). The prior report and README update were pushed as [`77f1b31`](https://github.com/theos-stack/punch-next-gen-quiz/commit/77f1b3175ef2486a474ba2a4ebaba592407f5b73). The deployment safeguard was pushed as [`bf47128`](https://github.com/theos-stack/punch-next-gen-quiz/commit/bf4712801186381606d9a08d520b23939f7f518d).
 
 ## Readiness recommendation
 
-**Not ready for assessment submission.** The core implementation and local automated checks pass, and prior live database submission/reward evidence remains available. A Vercel-authenticated Preview URL, Supabase Preview callback allowlist entry, authenticated browser journey, responsive screenshots, reciprocal RLS check, and pgTAP execution are still outstanding. Continue only after the Vercel GitHub integration is authorized and configured to keep `main` out of Production deployments.
+**Not ready for assessment submission.** The core implementation and local automated checks pass, and prior live database submission/reward evidence remains available. The source now blocks automatic deployment from every branch except `qa-preview`, and remote `main` and `qa-preview` are aligned. A GitHub-connected Vercel project, verified Preview URL, Supabase Preview callback allowlist entry, authenticated browser journey, responsive screenshots, reciprocal RLS check, and pgTAP execution are still outstanding. The next action is the one-time Vercel GitHub repository connection above. Do not deploy to Production or submit the assessment.
