@@ -102,12 +102,13 @@ To manually verify authentication, try registration, email confirmation, login, 
 
 - The repair migration, server-side quiz scoring, XP/badge allocation, duplicate rejection, and a simultaneous duplicate-submission test were verified against the assessment Supabase project. See [`PUNCH_FINAL_INTEGRATION_REPORT.md`](./PUNCH_FINAL_INTEGRATION_REPORT.md).
 - The mobile app navigation, dashboard summary, and pre-submit answer review have been implemented. They still require visual browser QA at the documented viewport widths.
-- The authenticated end-to-end browser journey, reciprocal student RLS check, exact callback redirect allowlist, local pgTAP suite, and Vercel preview remain unverified. See [`PUNCH_RELEASE_CANDIDATE_REPORT.md`](./PUNCH_RELEASE_CANDIDATE_REPORT.md) for current blockers.
+- A dedicated Vercel project and its Preview Supabase variables are configured. Vercel CLI deployments were unexpectedly assigned to Production and removed; there is no active Preview deployment. See [`PUNCH_FINAL_RELEASE_QA_REPORT.md`](./PUNCH_FINAL_RELEASE_QA_REPORT.md) for the exact blocker and next step.
+- The authenticated end-to-end browser journey, reciprocal student RLS check, exact callback redirect allowlist, and local pgTAP suite remain unverified. The previous UI checkpoint is [`PUNCH_RELEASE_CANDIDATE_REPORT.md`](./PUNCH_RELEASE_CANDIDATE_REPORT.md).
 - Email delivery and callback behavior depend on the Supabase project settings.
 
 ## Deployment
 
-No Vercel preview is currently linked to this checkout. Before creating a preview, link the authorized Vercel project, configure the two publishable Supabase environment variables above, and add the preview callback URL to Supabase Auth. Production deployment requires a separate review.
+The local checkout is linked to the dedicated Vercel project, with the two publishable Supabase environment variables set for Preview. A valid Preview URL is not available yet because the CLI keeps assigning the first deployment to Production. No Git repository integration or automatic deployment from `main` is enabled. Add the eventual Preview callback URL to Supabase Auth after Vercel produces one. Production deployment requires a separate review.
 
 ## AI assistance disclosure
 

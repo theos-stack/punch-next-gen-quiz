@@ -1,5 +1,7 @@
 # PUNCH NextGen — Release Candidate Report
 
+> Superseded by [`PUNCH_FINAL_RELEASE_QA_REPORT.md`](./PUNCH_FINAL_RELEASE_QA_REPORT.md), which records the Vercel access and Preview-target investigation performed afterward.
+
 **Date:** 22 October 2026 (WAT)  
 **Repository:** `theos-stack/punch-next-gen-quiz`  
 **Supabase project:** `syoyadobmvrckqkmbnmq`  
