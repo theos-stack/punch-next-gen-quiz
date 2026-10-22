@@ -60,7 +60,7 @@ This repair has not been applied to the remote database because the environment 
 
 ## GitHub and disclosure
 
-The repository already discloses Codex assistance in `README.md`; that disclosure remains unchanged. The targeted migration repair, source migration corrections, regression test, and this report are prepared for a meaningful commit under the configured Samuel Ojo identity. Remote CLI migration access and a passing live submission flow are release blockers; no Vercel deployment or assessment submission was performed.
+The repository already discloses Codex assistance in `README.md`; that disclosure remains unchanged. The targeted migration repair, source migration corrections, regression test, and report were committed and pushed under the configured Samuel Ojo identity as [`51ee703`](https://github.com/theos-stack/punch-next-gen-quiz/commit/51ee703436364aa9e2ed27873920d6f6880b0534). Remote CLI migration access and a passing live submission flow are release blockers; no Vercel deployment or assessment submission was performed.
 
 ## Readiness assessment
 
