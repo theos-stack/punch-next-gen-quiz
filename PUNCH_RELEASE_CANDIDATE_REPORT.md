@@ -72,4 +72,4 @@ Once Vercel access and browser verification are available, retest registration o
 
 ## GitHub checkpoint
 
-This report describes the source and documentation checkpoint prepared for commit. The verified Git author requested for the repository is Samuel Ojo (`ojoadeoluwasam@gmail.com`). The final remote commit hash and link will be recorded after the checkpoint is committed and pushed.
+The mobile experience, README, walkthrough, and this report were committed and pushed to `main` as [`ceee930`](https://github.com/theos-stack/punch-next-gen-quiz/commit/ceee9308e305b6fc0025987d7fce448fe2126046). The remote `main` hash was confirmed as `ceee9308e305b6fc0025987d7fce448fe2126046`. The verified author is Samuel Ojo (`ojoadeoluwasam@gmail.com`).
