@@ -64,6 +64,8 @@ Both existing accounts have confirmed email status and trigger-created profiles.
 
 An authenticated-role transaction for A confirmed one visible own profile, zero other profiles, zero visible rows for B's attempt, and zero visible XP for B. The reciprocal B-as-A RLS SQL check could not be completed: the CLI's database login-role endpoint returned HTTP 403 (“account does not have the necessary privileges to access this endpoint”). Earlier live application checks had also confirmed A could not read or update B's profile or attempt. The migration changes only the submission function and did not alter RLS policies.
 
+During test-inbox inspection, a one-time Student A sign-in email body was inadvertently included in an internal tool result. The link was not followed or exchanged; treat that specific link as exposed and allow its configured expiry to invalidate it. No account password, Supabase access token, or database password was disclosed.
+
 Local application HTTP checks after the repair confirmed unauthenticated quiz retrieval, attempt start, and submission each return HTTP 401. The protected dashboard returned a redirect response; logout returned HTTP 303 to `/login`. No authenticated app API request was run after the repair because the available browser session was not authorized to observe localhost and the email OTP flow was rate-limited.
 
 ## Browser and responsive UI
