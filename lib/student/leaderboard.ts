@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LeaderboardEntry } from "@/components/leaderboard-table";
+import { logLeaderboardRpcFailure } from "./leaderboard-diagnostic.mjs";
 
 type LegacyLeaderboardRow = {
   rank: number;
@@ -17,6 +18,8 @@ export async function getStudentLeaderboard(supabase: SupabaseClient, limit: num
       usedLegacyFallback: false,
     };
   }
+
+  logLeaderboardRpcFailure(current.error.code);
 
   if (current.error.code !== "PGRST202") {
     return { data: null, error: current.error, usedLegacyFallback: false };

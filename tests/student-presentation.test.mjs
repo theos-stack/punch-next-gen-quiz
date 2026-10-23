@@ -2,6 +2,17 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { badgeIsEarned, badgesUnlockedByAttempt, projectLeaderboardEntries } from "../lib/student/presentation.mjs";
 import { navigationProgressReducer } from "../lib/student/navigation-progress.mjs";
+import { logLeaderboardRpcFailure } from "../lib/student/leaderboard-diagnostic.mjs";
+
+test("leaderboard fallback logs only a safe RPC error code", () => {
+  let captured;
+  logLeaderboardRpcFailure("PGRST202", { error: (...args) => { captured = args; } });
+
+  assert.deepEqual(captured, ["Student workspace leaderboard RPC failed.", { code: "PGRST202" }]);
+
+  logLeaderboardRpcFailure("secret value with spaces", { error: (...args) => { captured = args; } });
+  assert.deepEqual(captured, ["Student workspace leaderboard RPC failed.", { code: "UNKNOWN" }]);
+});
 
 test("leaderboard labels only the authenticated ID-backed row as You and preserves rank", () => {
   const entries = [
