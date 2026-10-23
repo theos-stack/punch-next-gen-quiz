@@ -1,77 +1,71 @@
 # PUNCH NextGen — Final Release QA Report
 
-**Date:** 22 October 2026 (WAT)  
-**Starting commit:** `a364a2ee1b86b178462829bfd9b5a0bdc4ae0443`
-**Repository:** `theos-stack/punch-next-gen-quiz`  
+**Updated:** 23 October 2026 (WAT)
+**Repository:** `theos-stack/punch-next-gen-quiz`
 **Supabase project:** `syoyadobmvrckqkmbnmq`  
-**Status:** **No valid Preview deployment exists. Do not submit or deploy to Production.**
+**Assessment readiness:** **Not ready for submission; Preview is live, but authenticated and database verification is blocked.**
 
-## Vercel access and project setup
+## Preview deployment
 
-- `npx vercel@latest whoami` succeeded in the authorized Windows environment. CLI version used: `65.1.0`; no global CLI was needed.
-- No Vercel project was linked initially. I created and linked the dedicated project `theos-stacks-projects/punch-next-gen-quiz`.
-- At project setup, I declined the option to connect Git for automatic deployments. The GitHub repository remains unconnected to this Vercel project.
-- Added and pushed [`vercel.json`](https://github.com/theos-stack/punch-next-gen-quiz/blob/main/vercel.json) with `git.deploymentEnabled` set to disable `main` and all other branches, while allowing only `qa-preview`. The exact branch rule is `"*": false`, `"main": false`, and `"qa-preview": true`. Vercel's Git configuration documentation states unspecified branches default to enabled, so the wildcard is required to keep unrelated branches disabled. The JSON parsed successfully and the rules were inspected locally.
-- The safeguard commit is [`bf47128`](https://github.com/theos-stack/punch-next-gen-quiz/commit/bf4712801186381606d9a08d520b23939f7f518d). After confirming the safeguard was on remote `main`, created and pushed `qa-preview` from that exact commit. Both branches were then fast-forwarded together with this report update, and their remote heads were verified equal. GitHub's default branch was not changed and history was not rewritten.
-- The local `.env.local` Supabase URL was checked against `syoyadobmvrckqkmbnmq`; it matched. The exact application variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are now configured for the Vercel Preview environment. Their values were not included in this report or committed.
-- The local `.env.local` and `.vercel/` remain ignored. No environment file or credential was staged.
+- Vercel project: `theos-stacks-projects/punch-next-gen-quiz`, connected to GitHub repository `theos-stack/punch-next-gen-quiz`.
+- Live Preview: [qa-preview deployment](https://punch-next-gen-quiz-git-qa-preview-theos-stacks-projects.vercel.app/)
+- Unique deployment URL: [deployment](https://punch-next-gen-quiz-q8mvi9gbd-theos-stacks-projects.vercel.app/)
+- Vercel marked deployment **Ready**, environment **Preview**, branch `qa-preview`, commit [`df41296`](https://github.com/theos-stack/punch-next-gen-quiz/commit/df41296651a979371819f5ac5c4ac5d6967856b3). Vercel showed a successful build.
+- Deployment ID: `CsXjMLwwbUz54EYeSeXKBR4YFc4c`.
+- The Preview was triggered through the connected Git integration using a branch-restricted deployment hook after the dashboard's manual form would not enable `qa-preview`. The hook was revoked immediately after use. No hook URL or credential is retained in this report.
+- Project Settings showed GitHub connected, Production branch tracking set to `main`, and Preview tracking unassigned Git branches. The overview showed no Production deployment. No production domain or production deployment was created.
+- `vercel.json` disables deployments for all branches except `qa-preview`; `main` is explicitly disabled. JSON was validated locally. Safeguard commit: [`bf47128`](https://github.com/theos-stack/punch-next-gen-quiz/commit/bf4712801186381606d9a08d520b23939f7f518d).
+- The two required Supabase Preview variables were present and masked in Vercel settings: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Values were not viewed or recorded. `.env.local` and Vercel local configuration remain ignored; no environment file was committed.
 
-## Preview deployment blocker
+## Browser checks actually completed
 
-The current Vercel CLI/project behavior does not meet the Preview-only requirement:
+The stable Preview URL loaded in the browser. The landing page, `/login`, and `/register` rendered. The login form exposed email/password fields, and the registration form exposed name/email/password fields.
 
-1. `npx vercel@latest deploy --yes` omitted `--prod`, but Vercel returned deployment metadata with `target: production` and assigned the project's default alias. The CLI said its first deployment was assigned to Production.
-2. Explicit `--target=preview` and `--environment=preview` attempts also returned `target: production`, including an attempt from a temporary non-main branch.
-3. Each of the five returned Production-target deployment records was removed immediately. The Vercel CLI subsequently reported no active Production deployments; the alias listing showed no remaining project alias. No custom production domain was configured.
-4. The separate supported prebuilt flow successfully pulled Preview settings and ran the Next.js production build and TypeScript checks. Vercel packaging then failed while creating a serverless-function symlink: `EPERM: operation not permitted, symlink 'login.func' -> '.vercel/output/functions/dashboard.func'`. Retrying in the authorized Windows context produced the same filesystem failure.
+- Direct unauthenticated access to `/dashboard` redirected to `/login?next=/dashboard`.
+- A single request using a deliberately fabricated invalid address and password returned the expected generic login error; Vercel request logs showed `POST /api/auth/login` with HTTP 401. This confirms the unauthenticated error path only; it does not verify a real student's credentials or a successful Supabase login.
+- Landing, login, and registration pages returned successful page responses. No Preview runtime log entries appeared during the observed checks. Browser-console inspection was not available through the connected browser controls.
+- An on-screen landing-page capture was viewed during QA, but no screenshot file was saved as release evidence. The requested 375px, 390px, 768px, and 1440px captures and complete authenticated flow were not performed.
 
-The CLI account is authenticated and the Preview variables are present. The blocker is therefore not missing Vercel credentials: this empty project's CLI deployment is being forced to Production, while the prebuilt alternative cannot finish packaging on this Windows filesystem.
+## Supabase authentication and live data: blocked
 
-**Actual Preview URL:** none.  
-**Deployment status:** no active Preview deployment; no active Production deployment.  
-**Preview build:** Next.js compile and TypeScript succeeded, but Vercel packaging failed before an upload.  
-**Production:** no Production deployment is intentionally left active. The temporary Production-target records were removed.
+The currently signed-in Supabase dashboard identity was denied access to project `syoyadobmvrckqkmbnmq` and redirected to the organization projects page with “You do not have access to this project.” The isolated Supabase CLI runs without a protected-profile telemetry write, but `supabase migration list` then stopped because no CLI access token is available. No token was found at the expected CLI token path. No credentials were printed.
 
-## One required interactive action
+The repository's callback at `app/auth/callback/route.ts` exchanges the PKCE `code`, restricts `next` to a local relative path, and sends failed exchanges to `/login?message=confirmation-failed`. Registration builds its email redirect as `/auth/callback?next=/dashboard`. These are source-code observations, not successful live callback tests.
 
-The Vercel CLI session remains available, but it cannot connect GitHub to the project from this session. In Vercel, open **theos-stacks-projects → punch-next-gen-quiz → Project Settings → Git**, choose **Connect Git Repository**, select **GitHub → theos-stack/punch-next-gen-quiz**, and authorize that repository for the Vercel app if prompted. The safe `vercel.json` is already on remote `main` and `qa-preview` before this connection. Keep the Production Branch set to `main`; its deployment is explicitly disabled by the committed rule. After connecting, inspect **Settings → Environments → Production → Branch Tracking** and confirm the branch is `main`. `qa-preview` should then be treated as a Preview branch. Stop if the dashboard reports a Production deployment for either push or changes the configured production branch unexpectedly.
+The Preview callback URL that needs to be allowed in Supabase Auth is:
 
-Once Vercel displays the repository as connected and the Production Branch as `main`, tell me “connected”. I can then verify the first Git-triggered `qa-preview` deployment's target metadata and build before proceeding with callback configuration and browser QA. Do not promote the Preview.
+`https://punch-next-gen-quiz-git-qa-preview-theos-stacks-projects.vercel.app/auth/callback`
 
-## Authentication callback and Supabase redirects
+No redirect allowlist or Site URL changes were made, so the existing localhost configuration was not touched. Email confirmation, PKCE exchange, successful login/logout, session persistence, profile/quiz requests, cross-student RLS, rewards, leaderboard, and attempt history are **not verified on this Preview**. No test inboxes or authenticated student sessions were available. No reciprocal RLS check is claimed here.
 
-The callback implementation at `app/auth/callback/route.ts` exchanges the Supabase PKCE `code`, accepts only a local relative `next` path that begins with one slash and rejects `//`, and sends failed exchanges to `/login?message=confirmation-failed`.
-
-There is no Preview hostname to add to Supabase Auth's redirect allowlist. I did not change the Supabase allowlist or Site URL, so existing localhost entries remain untouched. Email confirmation, PKCE exchange, login/logout, session persistence, and protected-route behavior were not exercised against a deployed Preview in this pass. Do not reuse the previously exposed one-time sign-in URL documented in the earlier integration report.
-
-## Browser workflow, screenshots, and security
-
-No authenticated browser workflow or responsive screenshots were produced because no valid Preview deployment exists. Therefore the following are **not verified in a browser**: dashboard values, quiz navigation and answer review, results refresh, leaderboard, history, logout, browser console/runtime errors, and 375/390/768/1440-pixel layouts.
-
-The previous live database report remains the available evidence for server-calculated scoring, persisted answers and rewards, duplicate/concurrent submission rejection, and the Student A to Student B RLS checks. The reciprocal student isolation check remains incomplete. These database-level checks are not a substitute for the requested authenticated Preview workflow.
-
-No screenshot is attached or represented as browser evidence. Store real captures outside publicly served assets after the Preview is available.
+**Action needed to unblock:** grant the Supabase dashboard identity currently in use access to project `syoyadobmvrckqkmbnmq` (or sign in to the project-owning Supabase account), then confirm when the project's Auth URL Configuration page is accessible. For student-flow testing, provide authorized test sessions/inboxes through the existing secure sign-in flow; do not send passwords or one-time links in chat.
 
 ## Automated checks
 
+The application source used by the deployment is the same as commit `f606403`; `df41296` only records QA checks. On that source baseline:
+
 | Check | Result |
 | --- | --- |
-| `npm run lint` | Passed. |
-| `npm run typecheck` | Passed. |
-| `npm run test` | Passed: 3 tests, 0 failures. |
-| `npm run build` | Passed: optimized Next.js build. |
-| Vercel `build --environment=preview` | Next.js compile, typecheck, and route generation passed; packaging failed on the Windows symlink operation above. |
-| `npm run test:db` | Blocked: local PostgreSQL at `127.0.0.1:54322` refused the connection (`ECONNREFUSED`). pgTAP tests did not execute. |
-| Browser/responsive tests | Not run; no valid Preview URL. |
+| ESLint (`npm run lint`) | Passed |
+| TypeScript (`npm run typecheck`) | Passed |
+| Unit tests (`npm run test`) | Passed: 3 tests, 0 failures |
+| Production build (`npm run build`) | Passed: optimized Next.js build and route generation |
+| Vercel Preview build | Passed; deployment state Ready |
+| Database tests (`npm run test:db`) | Blocked: local PostgreSQL at `127.0.0.1:54322` refused the connection (`ECONNREFUSED`); pgTAP did not execute |
+| Browser integration and responsive screenshots | Incomplete; only public pages, unauthenticated redirect, and invalid-login path were checked |
 
-The detailed previous live database submission evidence remains in [`PUNCH_FINAL_INTEGRATION_REPORT.md`](./PUNCH_FINAL_INTEGRATION_REPORT.md). The five-minute walkthrough draft is [`PUNCH_5_MINUTE_WALKTHROUGH.md`](./PUNCH_5_MINUTE_WALKTHROUGH.md).
+The previously recorded live-database evidence remains in [`PUNCH_FINAL_INTEGRATION_REPORT.md`](./PUNCH_FINAL_INTEGRATION_REPORT.md); it is not a substitute for the requested authenticated browser verification on this Preview.
 
-## Repository and AI-use disclosure
+## Git and disclosure
 
-No application source changes were required in this Vercel setup attempt. The README points to this report, and the previous UI report is marked superseded. The existing AI-assistance disclosure in README remains intact. Vercel's generated `.gitignore` and dependency-lock changes were reverted. The deployment safeguard is committed separately from this QA report.
+- Remote `main` was verified at `f606403c7114e9d16a64728e7bc22f17512bcf28` before the latest QA update.
+- Remote `qa-preview` is at [`df41296`](https://github.com/theos-stack/punch-next-gen-quiz/commit/df41296651a979371819f5ac5c4ac5d6967856b3).
+- Deployment safeguard: [`bf47128`](https://github.com/theos-stack/punch-next-gen-quiz/commit/bf4712801186381606d9a08d520b23939f7f518d).
+- Prior QA/report commit: [`77f1b31`](https://github.com/theos-stack/punch-next-gen-quiz/commit/77f1b3175ef2486a474ba2a4ebaba592407f5b73).
+- Verified Git author: Samuel Ojo (`ojoadeoluwasam@gmail.com`). Existing AI-assistance disclosure in README remains intact. No application source fixes were needed during Preview setup.
 
-The verified Git author is Samuel Ojo (`ojoadeoluwasam@gmail.com`). The prior report and README update were pushed as [`77f1b31`](https://github.com/theos-stack/punch-next-gen-quiz/commit/77f1b3175ef2486a474ba2a4ebaba592407f5b73). The deployment safeguard was pushed as [`bf47128`](https://github.com/theos-stack/punch-next-gen-quiz/commit/bf4712801186381606d9a08d520b23939f7f518d).
+## Readiness
 
-## Readiness recommendation
+The connected Vercel Preview is live and its deployment is explicitly classified as **Preview**. The `main` branch deployment safeguard is present. Local lint, typecheck, unit tests, and production build pass.
 
-**Not ready for assessment submission.** The core implementation and local automated checks pass, and prior live database submission/reward evidence remains available. The source now blocks automatic deployment from every branch except `qa-preview`, and remote `main` and `qa-preview` are aligned. A GitHub-connected Vercel project, verified Preview URL, Supabase Preview callback allowlist entry, authenticated browser journey, responsive screenshots, reciprocal RLS check, and pgTAP execution are still outstanding. The next action is the one-time Vercel GitHub repository connection above. Do not deploy to Production or submit the assessment.
+**Do not submit the assessment yet.** Live authentication and database-backed student workflows remain unverified because the active Supabase identity lacks access to the target project and no test student sessions/inboxes are available. Responsive viewport screenshots and browser-console verification also remain outstanding. No Production deployment was made.
