@@ -17,7 +17,7 @@ export default function HomePage() {
         <nav className="nav-links" aria-label="Main navigation">
           <Link href="#how-it-works">How it works</Link>
           <Link href="/login">Log in</Link>
-          <Link className="nav-button" href="/register">Get started</Link>
+          <Link className="nav-button" href="/register">Get Started</Link>
         </nav>
       </header>
 

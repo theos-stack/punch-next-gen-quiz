@@ -196,6 +196,7 @@ button, a, input { outline-offset: 3px; }
 @media (max-width: 680px) {
   .topbar, .hero, .feature-inner, .footer { width: min(100% - 36px, 540px); }
   .topbar { height: 68px; }
+  .site-shell .nav-links > a:not(.nav-button) { display: none; }
   .nav-links { gap: 14px; font-size: 12px; }
   .nav-links .nav-button { min-height: 40px; padding: 0 13px; }
   .brand { font-size: 18px; }
