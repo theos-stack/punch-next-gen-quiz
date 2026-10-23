@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
 
 const manrope = localFont({
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={manrope.variable}>
-      <body>{children}</body>
+      <body><NavigationProgress />{children}</body>
     </html>
   );
 }

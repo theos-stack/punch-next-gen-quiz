@@ -9,6 +9,7 @@ export type LeaderboardEntry = {
   completed_quizzes: number;
   badge_keys: string[];
   is_current_student: boolean;
+  public_name?: string;
 };
 
 const badgeNames: Record<string, string> = {
@@ -28,16 +29,15 @@ export function LeaderboardTable({ entries, badgesAvailable = true }: { entries:
             <td><span className={`rank-mark ${entry.rank <= 3 ? "top-rank" : ""}`}>{entry.rank}</span></td>
             <th scope="row">
               <button className="leaderboard-name-button" type="button" aria-expanded={expanded} onClick={() => setExpandedRank(expanded ? null : entry.rank)}>
-                {entry.display_name}<span aria-hidden="true">{expanded ? "⌃" : "⌄"}</span>
+                {entry.public_name ?? (entry.is_current_student ? "You" : entry.display_name)}<span aria-hidden="true">{expanded ? "⌃" : "⌄"}</span>
               </button>
-              {entry.is_current_student && <small className="current-student-label">You</small>}
             </th>
             <td>{entry.total_xp.toLocaleString()}</td>
             <td>{entry.completed_quizzes.toLocaleString()}</td>
             <td>{!badgesAvailable ? "Temporarily unavailable" : entry.badge_keys.length ? entry.badge_keys.map((key) => badgeNames[key] ?? "Achievement").join(", ") : "—"}</td>
           </tr>
           {expanded && <tr key={`detail-${entry.rank}`} className="leaderboard-detail-row"><td colSpan={5}>
-            <div><strong>{entry.display_name}&apos;s public learning profile</strong><span>{entry.completed_quizzes} completed {entry.completed_quizzes === 1 ? "quiz" : "quizzes"} · {entry.total_xp.toLocaleString()} XP</span>
+            <div><strong>{(entry.public_name ?? (entry.is_current_student ? "You" : entry.display_name))}&apos;s public learning profile</strong><span>{entry.completed_quizzes} completed {entry.completed_quizzes === 1 ? "quiz" : "quizzes"} · {entry.total_xp.toLocaleString()} XP</span>
               <span>Public badges: {entry.badge_keys.length ? entry.badge_keys.map((key) => badgeNames[key] ?? "Achievement").join(", ") : "No badges earned yet"}</span></div>
           </td></tr>}
         </Fragment>;

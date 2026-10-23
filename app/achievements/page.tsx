@@ -2,6 +2,8 @@ import Link from "next/link";
 import { StudentAppChrome } from "@/components/student-app-chrome";
 import { StudentMobileNav } from "@/components/student-mobile-nav";
 import { requireStudent } from "@/lib/student/require-student";
+import { BadgeMedal } from "@/components/badge-medal";
+import { badgeIsEarned } from "@/lib/student/presentation.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +24,13 @@ export default async function AchievementsPage() {
       <p className="page-lede">Every badge is tied to a real quiz result and awarded once by the database.</p>
       {definitionsResult.error || earnedResult.error ? <div className="form-error" role="alert">Achievements could not be loaded. Refresh the page to try again.</div> : definitions.length ? <div className="achievement-grid">
         {definitions.map((badge) => {
-          const awardedAt = earned.get(badge.badge_key);
-          return <article className={`achievement-card ${awardedAt ? "is-earned" : "is-locked"}`} key={badge.badge_key}>
-            <span className="badge-medal" aria-hidden="true">{awardedAt ? "★" : "◇"}</span>
-            <div><span className="achievement-state">{awardedAt ? "Earned" : "Not yet earned"}</span><h2>{badge.name}</h2><p>{badge.description}</p>
+          const awardedAt = earned.get(badge.badge_key) ?? null;
+          const isEarned = badgeIsEarned(awardedAt);
+          return <article className={`achievement-card ${isEarned ? "is-earned" : "is-locked"}`} key={badge.badge_key}>
+            <BadgeMedal badgeKey={badge.badge_key} earned={isEarned} />
+            <div><span className="achievement-state">{isEarned ? "Earned" : "Locked"}</span><h2>{badge.name}</h2><p>{badge.description}</p>
               {badge.badge_key === "quiz_starter" && <small>Unlock: complete your first quiz.</small>}
-              {badge.badge_key === "high_scorer" && <small>Unlock: score 80% or higher on a quiz.</small>}
+              {badge.badge_key === "high_scorer" && <small>Unlock: score at least 80% on a quiz.</small>}
               {awardedAt && <time dateTime={awardedAt}>Awarded {new Date(awardedAt).toLocaleDateString()}</time>}
             </div>
           </article>;

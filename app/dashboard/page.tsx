@@ -3,6 +3,8 @@ import { StudentAppChrome } from "@/components/student-app-chrome";
 import { StudentMobileNav } from "@/components/student-mobile-nav";
 import type { LeaderboardEntry } from "@/components/leaderboard-table";
 import { getStudentLeaderboard } from "@/lib/student/leaderboard";
+import { projectLeaderboardEntries, badgeIsEarned } from "@/lib/student/presentation.mjs";
+import { BadgeMedal } from "@/components/badge-medal";
 import { requireStudent } from "@/lib/student/require-student";
 
 export const dynamic = "force-dynamic";
@@ -48,8 +50,7 @@ export default async function DashboardPage() {
     ? trend === null ? `Your best score so far is ${bestScore}%.` : trend > 0 ? `Your latest score is up ${trend} points from your previous quiz.` : trend < 0 ? `Your latest score is down ${Math.abs(trend)} points. Another practice round can help.` : "You matched your previous score. Keep building on it."
     : "Your first completed quiz will give you a score to build on.";
   const quizById = new Map((recentQuizzesResult.data ?? []).map((quiz) => [quiz.id, quiz]));
-  const badgeByKey = new Map((definitionsResult.data ?? []).map((badge) => [badge.badge_key, badge]));
-  const leaderboardRows = (leaderboardResult.data ?? []) as LeaderboardEntry[];
+  const leaderboardRows = projectLeaderboardEntries((leaderboardResult.data ?? []) as LeaderboardEntry[]);
   const topFive = leaderboardRows.filter((entry) => entry.rank <= 5);
   const currentStanding = leaderboardRows.find((entry) => entry.is_current_student);
 
@@ -68,7 +69,7 @@ export default async function DashboardPage() {
         <article className="dashboard-stat-card"><span className="stat-icon" aria-hidden="true">％</span><div><span>Average score</span><strong>{average === null ? "—" : `${average}%`}</strong></div></article>
       </section>
 
-      {(xpTotal === null || percentages === null || recentResult.error || completedCount.error || badgesResult.error || quizResult.error) && <p className="dashboard-data-note" role="status">Some learning statistics could not be refreshed. Try reloading the page.</p>}
+      {(xpTotal === null || percentages === null || recentResult.error || completedCount.error || badgesResult.error || definitionsResult.error || quizResult.error) && <p className="dashboard-data-note" role="status">Some learning statistics could not be refreshed. Try reloading the page.</p>}
 
       <section className="dashboard-block" aria-labelledby="available-quizzes-title">
         <div className="section-heading"><div><span className="section-kicker">PICK UP WHERE YOU LEFT OFF</span><h2 id="available-quizzes-title">Available quizzes</h2></div><Link href="/quizzes">Browse all <span aria-hidden="true">→</span></Link></div>
@@ -87,16 +88,16 @@ export default async function DashboardPage() {
           </section>
           <section className="dashboard-block leaderboard-preview" aria-labelledby="leaderboard-preview-title">
             <div className="section-heading"><div><span className="section-kicker">LEARN TOGETHER</span><h2 id="leaderboard-preview-title">Leaderboard</h2></div><Link href="/leaderboard">Full rankings <span aria-hidden="true">→</span></Link></div>
-            {leaderboardResult.error ? <p className="muted-copy">Leaderboard could not be loaded. Please try again later.</p> : topFive.length ? <div className="leaderboard-preview-list">{topFive.map((entry) => <div className={`leaderboard-preview-row ${entry.is_current_student ? "is-current-student" : ""}`} key={entry.rank}><span className={`rank-mark ${entry.rank <= 3 ? "top-rank" : ""}`}>{entry.rank}</span><strong>{entry.display_name}{entry.is_current_student && <small>You</small>}</strong><span>{entry.total_xp.toLocaleString()} XP</span></div>)}</div> : <p className="muted-copy">Complete a quiz to join the rankings.</p>}
+            {leaderboardResult.error ? <p className="muted-copy">Leaderboard could not be loaded. Please try again later.</p> : topFive.length ? <div className="leaderboard-preview-list">{topFive.map((entry) => <div className={`leaderboard-preview-row ${entry.is_current_student ? "is-current-student" : ""}`} key={entry.rank}><span className={`rank-mark ${entry.rank <= 3 ? "top-rank" : ""}`}>{entry.rank}</span><strong>{entry.public_name}</strong><span>{entry.total_xp.toLocaleString()} XP</span></div>)}</div> : <p className="muted-copy">Complete a quiz to join the rankings.</p>}
             {leaderboardResult.usedLegacyFallback && <p className="muted-copy" role="status">Top rankings are available. Your exact rank and public badges are temporarily unavailable.</p>}
             {currentStanding && currentStanding.rank > 5 && <div className="personal-rank-callout"><span>Your current position</span><strong>#{currentStanding.rank}</strong><small>{currentStanding.total_xp.toLocaleString()} XP · {currentStanding.completed_quizzes} completed quizzes</small></div>}
           </section>
         </div>
         <aside className="dashboard-hub-aside">
-          <section className="dashboard-block insight-card" aria-labelledby="insight-title"><span className="insight-mark" aria-hidden="true">↗</span><span className="section-kicker">YOUR PERFORMANCE</span><h2 id="insight-title">A little progress adds up</h2><p>{performance}</p>{average !== null && <div className="insight-metric"><span>Average score</span><strong>{average}%</strong></div>}</section>
+          <section className="dashboard-block insight-card" aria-labelledby="insight-title"><div className="insight-card-heading"><span className="section-kicker">YOUR PERFORMANCE</span><span className="insight-mark" aria-hidden="true">↗</span></div><h2 id="insight-title">A little progress adds up</h2><p>{performance}</p>{average !== null && <div className="insight-metric"><span>Average score</span><strong>{average}%</strong></div>}</section>
           <section className="dashboard-block achievement-preview" aria-labelledby="badges-title">
             <div className="section-heading"><div><span className="section-kicker">MILESTONES</span><h2 id="badges-title">Achievements</h2></div><Link href="/achievements" aria-label="View all achievements">All <span aria-hidden="true">→</span></Link></div>
-            {badgeRows.length ? <div className="badge-list">{badgeRows.map((badge) => { const definition = badgeByKey.get(badge.badge_key); return <div className="badge-item" key={badge.badge_key}><span className="badge-medal" aria-hidden="true">★</span><span><strong>{definition?.name ?? "Achievement"}</strong><small>{definition?.description ?? "Awarded for your learning."}</small></span></div>; })}</div> : <div className="badge-empty"><span className="badge-medal" aria-hidden="true">◇</span><p>Complete your first quiz to earn Quiz Starter.</p></div>}
+            <div className="badge-list">{(definitionsResult.data ?? []).map((badge) => { const earnedAt = badgeRows.find((earned) => earned.badge_key === badge.badge_key)?.awarded_at ?? null; const earned = badgeIsEarned(earnedAt); const condition = badge.badge_key === "quiz_starter" ? "Complete your first quiz" : badge.badge_key === "high_scorer" ? "Score at least 80% on a quiz" : badge.description; return <div className={`badge-item ${earned ? "is-earned" : "is-locked"}`} key={badge.badge_key}><BadgeMedal badgeKey={badge.badge_key} earned={earned} /><span><strong>{badge.name}</strong><small>{earned ? "Earned" : "Locked"} · {condition}</small></span></div>; })}</div>
             <Link className="subtle-page-link" href="/achievements">See badge requirements <span aria-hidden="true">→</span></Link>
           </section>
         </aside>

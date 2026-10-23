@@ -4,13 +4,14 @@ import { StudentAppChrome } from "@/components/student-app-chrome";
 import { StudentMobileNav } from "@/components/student-mobile-nav";
 import { getStudentLeaderboard } from "@/lib/student/leaderboard";
 import { requireStudent } from "@/lib/student/require-student";
+import { projectLeaderboardEntries } from "@/lib/student/presentation.mjs";
 
 export const dynamic = "force-dynamic";
 
 export default async function LeaderboardPage() {
   const { supabase, displayName } = await requireStudent("/leaderboard");
   const { data, error, usedLegacyFallback } = await getStudentLeaderboard(supabase, 100);
-  const entries = (data ?? []) as LeaderboardEntry[];
+  const entries = projectLeaderboardEntries((data ?? []) as LeaderboardEntry[]);
   const current = entries.find((entry) => entry.is_current_student);
 
   return <main className="dashboard-wrap">
