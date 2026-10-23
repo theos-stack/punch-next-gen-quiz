@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StudentAppChrome } from "@/components/student-app-chrome";
 import { StudentMobileNav } from "@/components/student-mobile-nav";
 import type { LeaderboardEntry } from "@/components/leaderboard-table";
+import { getStudentLeaderboard } from "@/lib/student/leaderboard";
 import { requireStudent } from "@/lib/student/require-student";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +29,7 @@ export default async function DashboardPage() {
     supabase.from("student_badges").select("badge_key, awarded_at").order("awarded_at", { ascending: false }),
     supabase.from("badge_definitions").select("badge_key, name, description").order("badge_key"),
     supabase.from("quizzes").select("id, slug, title, summary, duration_minutes").eq("is_published", true).order("created_at").limit(3),
-    supabase.rpc("get_student_workspace_leaderboard", { p_limit: 5 }),
+    getStudentLeaderboard(supabase, 5),
   ]);
 
   const recentAttempts = recentResult.data ?? [];
@@ -67,7 +68,7 @@ export default async function DashboardPage() {
         <article className="dashboard-stat-card"><span className="stat-icon" aria-hidden="true">％</span><div><span>Average score</span><strong>{average === null ? "—" : `${average}%`}</strong></div></article>
       </section>
 
-      {(xpTotal === null || percentages === null || recentResult.error || completedCount.error || badgesResult.error || quizResult.error || leaderboardResult.error) && <p className="dashboard-data-note" role="status">Some learning statistics could not be refreshed. Try reloading the page.</p>}
+      {(xpTotal === null || percentages === null || recentResult.error || completedCount.error || badgesResult.error || quizResult.error) && <p className="dashboard-data-note" role="status">Some learning statistics could not be refreshed. Try reloading the page.</p>}
 
       <section className="dashboard-block" aria-labelledby="available-quizzes-title">
         <div className="section-heading"><div><span className="section-kicker">PICK UP WHERE YOU LEFT OFF</span><h2 id="available-quizzes-title">Available quizzes</h2></div><Link href="/quizzes">Browse all <span aria-hidden="true">→</span></Link></div>
@@ -87,6 +88,7 @@ export default async function DashboardPage() {
           <section className="dashboard-block leaderboard-preview" aria-labelledby="leaderboard-preview-title">
             <div className="section-heading"><div><span className="section-kicker">LEARN TOGETHER</span><h2 id="leaderboard-preview-title">Leaderboard</h2></div><Link href="/leaderboard">Full rankings <span aria-hidden="true">→</span></Link></div>
             {leaderboardResult.error ? <p className="muted-copy">Leaderboard could not be loaded. Please try again later.</p> : topFive.length ? <div className="leaderboard-preview-list">{topFive.map((entry) => <div className={`leaderboard-preview-row ${entry.is_current_student ? "is-current-student" : ""}`} key={entry.rank}><span className={`rank-mark ${entry.rank <= 3 ? "top-rank" : ""}`}>{entry.rank}</span><strong>{entry.display_name}{entry.is_current_student && <small>You</small>}</strong><span>{entry.total_xp.toLocaleString()} XP</span></div>)}</div> : <p className="muted-copy">Complete a quiz to join the rankings.</p>}
+            {leaderboardResult.usedLegacyFallback && <p className="muted-copy" role="status">Top rankings are available. Your exact rank and public badges are temporarily unavailable.</p>}
             {currentStanding && currentStanding.rank > 5 && <div className="personal-rank-callout"><span>Your current position</span><strong>#{currentStanding.rank}</strong><small>{currentStanding.total_xp.toLocaleString()} XP · {currentStanding.completed_quizzes} completed quizzes</small></div>}
           </section>
         </div>

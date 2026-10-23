@@ -16,7 +16,7 @@ const badgeNames: Record<string, string> = {
   high_scorer: "High Scorer",
 };
 
-export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
+export function LeaderboardTable({ entries, badgesAvailable = true }: { entries: LeaderboardEntry[]; badgesAvailable?: boolean }) {
   const [expandedRank, setExpandedRank] = useState<number | null>(null);
   return <div className="leaderboard-table-wrap">
     <table className="leaderboard-table">
@@ -34,7 +34,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
             </th>
             <td>{entry.total_xp.toLocaleString()}</td>
             <td>{entry.completed_quizzes.toLocaleString()}</td>
-            <td>{entry.badge_keys.length ? entry.badge_keys.map((key) => badgeNames[key] ?? "Achievement").join(", ") : "—"}</td>
+            <td>{!badgesAvailable ? "Temporarily unavailable" : entry.badge_keys.length ? entry.badge_keys.map((key) => badgeNames[key] ?? "Achievement").join(", ") : "—"}</td>
           </tr>
           {expanded && <tr key={`detail-${entry.rank}`} className="leaderboard-detail-row"><td colSpan={5}>
             <div><strong>{entry.display_name}&apos;s public learning profile</strong><span>{entry.completed_quizzes} completed {entry.completed_quizzes === 1 ? "quiz" : "quizzes"} · {entry.total_xp.toLocaleString()} XP</span>
