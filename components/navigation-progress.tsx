@@ -1,22 +1,24 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
+import { navigationProgressReducer } from "@/lib/student/navigation-progress.mjs";
 
 export function NavigationProgress() {
   const pathname = usePathname();
-  const [isNavigating, setIsNavigating] = useState(false);
+  const [isNavigating, dispatch] = useReducer(navigationProgressReducer, false);
+  const clearTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
-    let clearTimer: ReturnType<typeof setTimeout> | undefined;
     const clear = () => {
-      setIsNavigating(false);
-      if (clearTimer) clearTimeout(clearTimer);
+      dispatch("failed");
+      if (clearTimer.current) clearTimeout(clearTimer.current);
+      clearTimer.current = undefined;
     };
     const start = () => {
-      setIsNavigating(true);
-      if (clearTimer) clearTimeout(clearTimer);
-      clearTimer = setTimeout(clear, 12_000);
+      dispatch("start");
+      if (clearTimer.current) clearTimeout(clearTimer.current);
+      clearTimer.current = setTimeout(clear, 12_000);
     };
     const onClick = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -33,12 +35,14 @@ export function NavigationProgress() {
     return () => {
       document.removeEventListener("click", onClick);
       window.removeEventListener("popstate", onPopState);
-      if (clearTimer) clearTimeout(clearTimer);
+      if (clearTimer.current) clearTimeout(clearTimer.current);
     };
   }, []);
 
   useEffect(() => {
-    setIsNavigating(false);
+    dispatch("complete");
+    if (clearTimer.current) clearTimeout(clearTimer.current);
+    clearTimer.current = undefined;
   }, [pathname]);
 
   return <div className={`navigation-progress ${isNavigating ? "is-active" : ""}`} aria-hidden="true"><span /></div>;

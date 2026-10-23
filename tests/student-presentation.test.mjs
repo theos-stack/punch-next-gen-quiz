@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { badgeIsEarned, badgesUnlockedByAttempt, projectLeaderboardEntries } from "../lib/student/presentation.mjs";
+import { navigationProgressReducer } from "../lib/student/navigation-progress.mjs";
 
 test("leaderboard labels only the authenticated ID-backed row as You and preserves rank", () => {
   const entries = [
@@ -30,4 +31,11 @@ test("result badges include only awards created by this attempt", () => {
 
   assert.deepEqual(badgesUnlockedByAttempt(badges, "current-attempt"), [badges[1]]);
   assert.deepEqual(badgesUnlockedByAttempt(badges, "other-attempt"), []);
+});
+
+test("navigation feedback stays visible while a route is pending and clears on completion or failure", () => {
+  const pending = navigationProgressReducer(false, "start");
+  assert.equal(pending, true, "a delayed route has immediate pending feedback");
+  assert.equal(navigationProgressReducer(pending, "complete"), false);
+  assert.equal(navigationProgressReducer(pending, "failed"), false, "the fallback timeout clears failed navigation");
 });
