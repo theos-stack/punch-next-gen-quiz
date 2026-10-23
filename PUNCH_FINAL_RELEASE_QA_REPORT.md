@@ -76,3 +76,50 @@ The verified Git author is Samuel Ojo (`ojoadeoluwasam@gmail.com`). The prior re
 ## Readiness recommendation
 
 **Not ready for assessment submission.** The GitHub connection and `main` branch tracking are verified; the `vercel.json` safeguard blocks every branch except `qa-preview`. Lint, typecheck, unit tests and build pass locally. A Preview URL, Supabase Preview callback allowlist entry, authenticated student journey, responsive screenshots, reciprocal RLS check, and pgTAP execution are outstanding. The Vercel dashboard did not resolve the `qa-preview` ref in its manual deployment form. Do not deploy to Production or submit the assessment.
+
+## Leaderboard RPC repair and final QA follow-up — 23 October 2026
+
+This follow-up supersedes earlier statements in this report that there was no Preview deployment. The new code commit is deployed to a ready Preview; the full authenticated QA remains incomplete.
+
+### Supabase access, migration history, and RPC
+
+- The CLI worked after setting `SUPABASE_HOME` to a writable temporary directory and disabling telemetry for the process. The earlier filesystem failure was a write to the protected profile path `C:\Users\ojoad\.supabase\telemetry.json`; no credentials were printed or stored in the repository.
+- The remote migration list initially showed five matching local/remote migrations and one pending local migration: `20261023010000_student_workspace_leaderboard.sql`.
+- `supabase db push --dry-run` identified only that additive migration. A read-only catalog check showed `get_student_workspace_leaderboard` absent while `get_leaderboard` and `submit_quiz_attempt` existed.
+- The pending migration was applied. A later migration list showed all six migrations matched, and a dry run returned `upToDate: true` with no pending migrations.
+- The root cause of `PGRST202` was the unapplied migration: the RPC was absent from the remote PostgreSQL catalog. After application, the RPC catalog reports argument `p_limit integer`, a table return with rank, public display name, XP, completed quiz count, badge keys and current-student flag, `SECURITY DEFINER`, and `search_path=""`. Execute is denied to `anon` and granted to `authenticated`.
+- An unauthenticated REST call now returns HTTP 401 / `42501 permission denied for function`, not `PGRST202`. This confirms PostgREST sees the function and enforces its grant. An authenticated successful RPC call was not performed in this pass.
+- `profiles`, `quiz_attempts`, and `student_badges` have RLS enabled. The inspected policies scope profile reads/updates to `auth.uid() = id`, and attempt and badge reads to `auth.uid() = user_id`. No RLS changes were made. The RPC uses `auth.uid()` for the current-student marker and returns no email field.
+- The locally reviewed function ranks by XP descending with deterministic name and ID tie-breaks, includes the authenticated student's row beyond the top limit, and returns only the approved public leaderboard fields. Function behavior under two real student JWTs remains to be verified.
+
+### Code correction and automated checks
+
+- The old code used a limited legacy leaderboard when PostgREST returned `PGRST202`, but emitted no server-side diagnostic. It could conceal a missing migration.
+- The fallback now logs only the RPC error code (sanitized to an uppercase code token), never the message, email, user ID, token, or database data. The UI continues to label the legacy results as limited; it does not invent an exact current rank.
+- ESLint: passed.
+- TypeScript: passed.
+- Unit tests: passed, 11/11, including a focused check that the server diagnostic exposes only a safe code.
+- Production build: passed.
+- `npm run test:db`: blocked before tests ran because local PostgreSQL at `127.0.0.1:54322` refused the connection (`ECONNREFUSED`). pgTAP was not executed.
+- The remote catalog/RLS inspection and anonymous permission-denial probe ran successfully. They do not replace authenticated integration tests.
+
+### Preview and browser checks
+
+- Vercel's Deployments page identifies commit `4b361644bb42857dcd86e9d768480a1ded295f2a` on branch `qa-preview` as **Ready / Preview**. No Production deployment was initiated by this follow-up. The committed `vercel.json` branch safeguards remain unchanged.
+- Preview URL: https://punch-next-gen-quiz-git-qa-preview-theos-stacks-projects.vercel.app/
+- The actual Preview landing page was measured at 320, 375, 390, 768, 1024 and 1440 CSS pixels. At all six requested widths, `documentElement.scrollWidth` did not exceed `clientWidth`. The public landing page was visually inspected at 375px and 1440px; no public-page horizontal overflow was observed.
+- Direct unauthenticated navigation to `/dashboard` redirected to `/login?next=%2Fdashboard`, as expected. The login page displayed both the email form and Google sign-in option.
+- The open app tabs did not contain an authenticated student session. Therefore no dashboard data, “You” row, earned/locked badge rendering, quiz attempt, history, achievements, logout, callback exchange, or session persistence was tested in the browser. No authenticated dashboard/badge screenshots are represented as captured.
+- Browser screenshots of public pages were viewed during QA, but this session did not provide a supported export path to save them as report files. Authenticated screenshot evidence is outstanding.
+
+### Remaining verification and manual checklist
+
+Full authenticated release QA is **not complete**. The missing prerequisite is an authenticated session for an authorized fictitious student account in the Preview browser; no account password or inbox access was available in the current session. Do not send credentials here. To continue, sign in on the Preview as test student A and leave that tab open, then repeat with test student B after sign-out.
+
+For each authorized test account, verify the dashboard XP/completion values, exact leaderboard row and public badges; open Achievements and History; inspect quiz question secrecy; and check one existing result. Then compare the other student's private profile/attempt URL under the second ordinary session and confirm access is denied. Use a disposable test attempt only if the test accounts are approved for persistent synthetic data. Capture screenshots from the signed-in pages for the final evidence set. The assessment remains **NO-GO for final submission** until those authenticated checks and saved screenshots pass.
+
+### GitHub
+
+- Code correction: [`4b36164`](https://github.com/theos-stack/punch-next-gen-quiz/commit/4b361644bb42857dcd86e9d768480a1ded295f2a), authored as Samuel Ojo (`ojoadeoluwasam@gmail.com`).
+- Pushed only to `qa-preview`. At verification, remote `qa-preview` was `4b361644bb42857dcd86e9d768480a1ded295f2a`; remote `main` remained `10e0533732a0f573cdfe0dbde9293ac2d27799d3`.
+- The AI-assistance disclosure in README was not changed.
