@@ -223,6 +223,7 @@ button, a, input { outline-offset: 3px; }
   .brand-mark { width: 33px; height: 33px; }
   .hero { grid-template-columns: 1fr; padding: 42px 0 30px; }
   .hero-copy { font-size: 15px; }
+  .hero-actions { align-items: flex-start; flex-direction: column; gap: 2px; margin-top: 24px; }
   .hero-visual { min-height: 360px; margin-top: 2px; }
   .feature-inner { grid-template-columns: 1fr; gap: 19px; padding: 24px 0; }
   .auth-wrap { grid-template-columns: 1fr; }
