@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 
 export default function AuthLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <main className="auth-wrap">
       <aside className="auth-aside">
         <Link className="brand" href="/" aria-label="PUNCH NextGen home">
-          <span className="brand-mark" aria-hidden="true">P</span>
+          <BrandMark />
           <span>PUNCH NEXTGEN</span>
         </Link>
         <div className="aside-content">

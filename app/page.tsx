@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 
 function Brand() {
   return (
     <Link className="brand" href="/" aria-label="PUNCH NextGen home">
-      <span className="brand-mark" aria-hidden="true">P</span>
-      <span>PUNCH <span style={{ color: "var(--green)" }}>NEXTGEN</span></span>
+      <BrandMark />
+      <span>PUNCH <span style={{ color: "var(--crimson)" }}>NEXTGEN</span></span>
     </Link>
   );
 }
@@ -40,7 +41,7 @@ export default function HomePage() {
             <div className="progress-track"><div className="progress-fill" /></div>
             <h2>Which planet is known as the Red Planet?</h2>
             <div className="answer-option"><span className="answer-key">A</span>Venus</div>
-            <div className="answer-option selected"><span className="answer-key">B</span>Mars <span aria-hidden="true" style={{ marginLeft: "auto", color: "var(--green)" }}>✓</span></div>
+            <div className="answer-option selected"><span className="answer-key">B</span>Mars <span aria-hidden="true" style={{ marginLeft: "auto", color: "var(--success)" }}>✓</span></div>
             <div className="answer-option"><span className="answer-key">C</span>Jupiter</div>
           </div>
           <div className="score-float"><strong>+10 XP</strong><span>Every correct answer counts</span></div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 
 const destinations = [
   { href: "/dashboard", label: "Overview", icon: "home" },
@@ -38,7 +39,7 @@ export function StudentAppChrome({ displayName, currentPath }: { displayName: st
   return <>
     <aside className="student-sidebar" aria-label="Student workspace">
       <Link className="student-sidebar-brand" href="/dashboard" aria-label="PUNCH NextGen overview">
-        <span className="brand-mark" aria-hidden="true">P</span><span><strong>PUNCH NEXTGEN</strong><small>STUDENT HUB</small></span>
+        <BrandMark /><span><strong>PUNCH NEXTGEN</strong><small>STUDENT HUB</small></span>
       </Link>
       <span className="sidebar-section-label">LEARN</span>
       <nav className="student-sidebar-nav" aria-label="Main navigation">
