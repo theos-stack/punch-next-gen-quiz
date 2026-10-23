@@ -92,6 +92,11 @@ button, a, input { outline-offset: 3px; }
 .form-error { border: 1px solid #f3d2ce; background: #fff4f2; color: #9b3024; }
 .form-success { border: 1px solid #d8edce; background: #f4faef; color: #326b2a; }
 .auth-submit { width: 100%; margin-top: 7px; }
+.button-social { width: 100%; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 11px; padding: 0 16px; border: 1px solid #dce3de; border-radius: 10px; background: #fff; color: var(--ink); font-weight: 700; cursor: pointer; transition: background .15s ease, border-color .15s ease; }
+.button-social:hover { border-color: #b9c6bd; background: #fbfcfa; }
+.button-social:disabled { opacity: .65; cursor: wait; }
+.auth-divider { display: flex; align-items: center; gap: 13px; margin: 20px 0; color: #7c858c; font-size: 12px; }
+.auth-divider::before, .auth-divider::after { content: ""; height: 1px; flex: 1; background: #e5e9e5; }
 .auth-switch { margin-top: 24px; color: #6f7982; text-align: center; font-size: 13px; }
 .auth-switch a { color: var(--green); font-weight: 750; }
 .dashboard-wrap { min-height: 100vh; }
