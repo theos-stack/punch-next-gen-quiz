@@ -65,9 +65,9 @@ button, a, input { outline-offset: 3px; }
 .button-secondary:hover { color: var(--crimson); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .trust-note { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: #737d86; font-size: 13px; }
 .trust-check { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--success) 10%, white); color: var(--success); font-size: 12px; font-weight: 900; }
-.hero-visual { min-height: 430px; position: relative; display: grid; place-items: center; animation: content-arrive .68s cubic-bezier(.2,.7,.25,1) .08s both; }
-.visual-backdrop { position: absolute; width: min(100%, 450px); aspect-ratio: 1 / .88; border-radius: 42% 58% 55% 45% / 47% 44% 56% 53%; background: var(--crimson-soft); transform: rotate(-8deg); animation: backdrop-breathe 8s ease-in-out .5s infinite; }
-.quiz-card { position: relative; width: min(360px, 90%); padding: 25px; border: 1px solid rgba(255,255,255,.9); border-radius: 20px; background: rgba(255,255,255,.94); box-shadow: 0 24px 70px rgba(24, 59, 37, .13); transform: rotate(2deg); animation: quiz-card-float 7s ease-in-out .7s infinite; }
+.hero-visual { min-height: 430px; position: relative; display: grid; place-items: center; }
+.visual-backdrop { position: absolute; width: min(100%, 450px); aspect-ratio: 1 / .88; border-radius: 42% 58% 55% 45% / 47% 44% 56% 53%; background: var(--crimson-soft); transform: rotate(-8deg); }
+.quiz-card { position: relative; width: min(360px, 90%); padding: 25px; border: 1px solid rgba(255,255,255,.9); border-radius: 20px; background: rgba(255,255,255,.94); box-shadow: 0 24px 70px rgba(24, 59, 37, .13); transform: rotate(2deg); animation: quiz-card-landing .95s cubic-bezier(.2,.8,.2,1) .16s both; }
 .quiz-card-top { display: flex; align-items: center; justify-content: space-between; color: #7a858e; font-size: 12px; font-weight: 700; }
 .progress-track { height: 7px; margin-top: 13px; overflow: hidden; border-radius: 10px; background: var(--line); }
 .progress-fill { width: 62%; height: 100%; border-radius: inherit; background: var(--crimson); }
@@ -76,7 +76,7 @@ button, a, input { outline-offset: 3px; }
 .answer-option.selected { border-color: var(--crimson); background: var(--crimson-soft); color: var(--crimson-dark); }
 .answer-key { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 7px; background: #f1f3ef; font-size: 11px; font-weight: 800; }
 .answer-option.selected .answer-key { background: color-mix(in srgb, var(--crimson) 14%, white); }
-.score-float { position: absolute; right: 1%; bottom: 38px; z-index: 2; padding: 14px 17px; border: 1px solid #e4eadf; border-radius: 14px; background: white; box-shadow: 0 12px 30px rgba(24,59,37,.11); transform: rotate(-5deg); animation: score-note-float 6s ease-in-out 1s infinite; }
+.score-float { position: absolute; right: 1%; bottom: 38px; z-index: 2; padding: 14px 17px; border: 1px solid #e4eadf; border-radius: 14px; background: white; box-shadow: 0 12px 30px rgba(24,59,37,.11); transform: rotate(-5deg); }
 .score-float strong { display: block; color: var(--gold); font-size: 20px; }
 .score-float span { color: #76808a; font-size: 11px; }
 .feature-strip { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -347,9 +347,25 @@ button, a, input { outline-offset: 3px; }
 .student-topbar-title { display: grid; gap: 4px; }
 .student-topbar-title span { color: #87918b; font-size: 9px; font-weight: 800; letter-spacing: .13em; }
 .student-topbar-title strong { color: #26332b; font-size: 14px; }
-.student-topbar-account { display: inline-flex; align-items: center; gap: 9px; color: #46534a; font-size: 12px; font-weight: 700; }
+.account-menu { position: relative; z-index: 18; }
+.student-topbar-account { display: inline-flex; align-items: center; gap: 9px; padding: 5px 9px 5px 5px; border-radius: 999px; color: #46534a; font-size: 12px; font-weight: 700; list-style: none; cursor: pointer; transition: background .16s ease, color .16s ease; }
+.student-topbar-account::-webkit-details-marker { display: none; }
+.student-topbar-account:hover, .account-menu[open] > .student-topbar-account { background: #f5f7f3; color: var(--crimson-dark); }
+.student-topbar-account:focus-visible { outline: 3px solid var(--crimson); outline-offset: 3px; }
 .student-topbar-account .initials-avatar { width: 34px; height: 34px; flex-basis: 34px; border-radius: 50%; }
-.topbar-chevron { margin-left: 2px; color: #87918b; font-size: 16px; }
+.topbar-chevron { width: 16px; height: 16px; margin-left: 2px; color: #87918b; transition: transform .18s ease, color .18s ease; }
+.account-menu[open] .topbar-chevron { transform: rotate(180deg); color: var(--crimson); }
+.account-menu-panel { position: absolute; top: calc(100% + 10px); right: 0; z-index: 30; width: min(300px, calc(100vw - 28px)); padding: 9px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 18px 48px rgba(30, 44, 34, .16); animation: account-menu-arrive .18s ease-out both; }
+.account-menu-identity { display: flex; align-items: center; gap: 12px; padding: 11px; border-bottom: 1px solid var(--line); }
+.account-menu-identity > div { display: grid; min-width: 0; gap: 3px; }
+.account-menu-identity small, .account-menu-identity > div > span { color: #87918b; font-size: 10px; }
+.account-menu-identity strong { overflow: hidden; color: #26332b; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.account-menu-actions { display: grid; gap: 3px; padding-top: 7px; }
+.account-menu-actions a, .account-menu-actions button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 42px; padding: 0 11px; border: 0; border-radius: 10px; background: transparent; color: #4b584f; font: inherit; font-size: 12px; font-weight: 650; text-align: left; cursor: pointer; }
+.account-menu-actions a:hover, .account-menu-actions button:hover { background: var(--cream); color: var(--crimson-dark); }
+.account-menu-actions svg { width: 17px; height: 17px; flex: 0 0 17px; }
+.account-menu-actions form { margin: 0; }
+.account-menu-actions .account-menu-logout { color: #9b4337; }
 .dashboard-wrap > .dashboard-main { grid-column: 2; grid-row: 2; width: min(1320px, calc(100% - 76px)); margin: 0 auto; padding: 40px 0 82px; }
 .dashboard-home { padding-top: 36px !important; }
 .dashboard-home > .dashboard-heading { animation: content-arrive .48s cubic-bezier(.2,.7,.25,1) both; }
@@ -473,17 +489,15 @@ button, a, input { outline-offset: 3px; }
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes quiz-card-float {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(2deg); }
-  50% { transform: translate3d(0, -7px, 0) rotate(1.4deg); }
+@keyframes quiz-card-landing {
+  0% { opacity: 0; transform: perspective(900px) translate3d(0, 22px, 0) rotateX(7deg) rotateY(-17deg) rotateZ(-2deg) scale(.96); }
+  68% { opacity: 1; transform: perspective(900px) translate3d(0, -5px, 0) rotateX(-1deg) rotateY(2deg) rotateZ(2.8deg) scale(1.012); }
+  84% { opacity: 1; transform: perspective(900px) translate3d(0, 2px, 0) rotateX(0) rotateY(-.5deg) rotateZ(1.4deg) scale(.998); }
+  100% { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) rotateY(0) rotateZ(2deg) scale(1); }
 }
-@keyframes backdrop-breathe {
-  0%, 100% { transform: rotate(-8deg) scale(1); }
-  50% { transform: rotate(-5deg) scale(1.025); }
-}
-@keyframes score-note-float {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 -5px; }
+@keyframes account-menu-arrive {
+  from { opacity: 0; transform: translateY(-5px) scale(.985); transform-origin: top right; }
+  to { opacity: 1; transform: translateY(0) scale(1); transform-origin: top right; }
 }
 
 @media (max-width: 1100px) {
@@ -602,10 +616,8 @@ button, a, input { outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .loading-skeleton, .navigation-progress.is-active > span { animation: none; } .loading-skeleton { background: var(--line); } }
 @media (prefers-reduced-motion: reduce) {
   .hero > div:first-child,
-  .hero-visual,
-  .visual-backdrop,
   .quiz-card,
-  .score-float,
+  .account-menu-panel,
   .auth-aside .brand,
   .aside-content,
   .aside-foot,

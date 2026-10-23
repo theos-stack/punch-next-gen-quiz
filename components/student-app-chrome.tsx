@@ -62,9 +62,26 @@ export function StudentAppChrome({ displayName, currentPath }: { displayName: st
     </aside>
     <header className="student-topbar">
       <div className="student-topbar-title"><span>STUDENT WORKSPACE</span><strong>{pageTitle}</strong></div>
-      <Link className="student-topbar-account" href="/account" aria-label={`Account settings for ${displayName}`}>
-        <span className="initials-avatar" aria-hidden="true">{initials(displayName)}</span><span>{displayName}</span><span className="topbar-chevron" aria-hidden="true">⌄</span>
-      </Link>
+      <details className="account-menu">
+        <summary className="student-topbar-account" aria-label={`Open account menu for ${displayName}`}>
+          <span className="initials-avatar" aria-hidden="true">{initials(displayName)}</span>
+          <span>{displayName}</span>
+          <svg className="topbar-chevron" aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </summary>
+        <div className="account-menu-panel">
+          <div className="account-menu-identity">
+            <span className="initials-avatar" aria-hidden="true">{initials(displayName)}</span>
+            <div><small>Signed in as</small><strong>{displayName}</strong><span>Student account</span></div>
+          </div>
+          <nav className="account-menu-actions" aria-label="Account options">
+            <Link href="/account"><Icon name="user" />Account settings</Link>
+            <Link href="/"><Icon name="home" />Back to home</Link>
+            <form action="/api/auth/logout" method="post">
+              <button className="account-menu-logout" type="submit"><span aria-hidden="true">↗</span>Log out</button>
+            </form>
+          </nav>
+        </div>
+      </details>
     </header>
   </>;
 }
