@@ -79,4 +79,4 @@ npm run build
 
 ## AI-use disclosure
 
-Samuel Ojo is the project author and directed its product reasoning, application architecture, backend structure and logic, frontend and backend implementation, and API integration. OpenAI Codex designed the interface in collaboration with Samuel and generated or modified substantial portions of the application code, including frontend, backend, and API-consumption work. Codex also supported testing, debugging, documentation, and project summaries. Samuel reviewed the work and remains responsible for the application.
+Samuel Ojo is the author and full-stack developer of PUNCH NextGen. He led the product reasoning and application architecture, designed the backend structure and logic, and drove frontend and backend implementation and API integration. OpenAI Codex was used as a development assistant for interface design, code iteration, debugging, testing support, documentation, and project summaries. Samuel directed and reviewed the work and is responsible for the application.
